@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: repair
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/repair?useSSL=false&serverTimezone=UTC
+    username: root
+    password: 13531431982
+server:
+  port: 8080
+  address: localhost
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.project.repair.Entity
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    com.project.repair: debug
+    com.baomidou.mybatisplus: debug
