@@ -1,6 +1,10 @@
 package com.project.repair.Filter;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.project.repair.Entity.User;
+import com.project.repair.Service.UserService;
 import com.project.repair.Utils.JwtTokenUtil;
+import com.project.repair.Utils.UserContext;
 import jakarta.servlet.FilterChain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -9,7 +13,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,6 +20,9 @@ import java.io.IOException;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    @Autowired
+    private UserService userService;
 
     private final JwtTokenUtil jwtTokenUtil;
 
@@ -35,6 +41,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (token != null && jwtTokenUtil.validateToken(token)) {
             // 3. 从Token中获取用户名
             String username = jwtTokenUtil.getUsernameFromToken(token);
+
+            /**
+             * 这里实现从数据库中查询用户信息,并存入localThread，进行数据共享
+             * */
+            LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<User>()
+                    .eq(User::getUsername, username);
+            User user = userService.getOne(queryWrapper);
+
+            UserContext.setUser(user);
 
             // 4. 创建认证对象
             UsernamePasswordAuthenticationToken authentication =

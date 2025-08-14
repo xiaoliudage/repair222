@@ -9,6 +9,7 @@ import com.project.repair.Entity.User;
 import com.project.repair.Service.RepairWorkerService;
 import com.project.repair.Service.TaskService;
 import com.project.repair.Utils.JwtTokenUtil;
+import com.project.repair.Utils.UserContext;
 import org.apache.tomcat.Jar;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,15 +94,26 @@ public class RepairController {
     /**
      * 维修任务发布
      * */
-    public void publish(@RequestBody TaskDto taskDto) {
+    @PostMapping("/publish")
+    public RepairTask publish(@RequestBody TaskDto taskDto) {
         RepairTask repairTask = new RepairTask();
         BeanUtils.copyProperties(taskDto, repairTask);
-        repairTask.setPublisherName("张三");
-        repairTask.setPublisherPhone("13800000000");
-        repairTask.setPublisherAddress("北京市海淀区");
+        User user = UserContext.getUser();
+        repairTask.setPublisherName(user.getUsername());
+        repairTask.setPublisherPhone(user.getPhone());
+        repairTask.setPublisherAddress(user.getAddress());
         repairTask.setPublishTime(new Date());
         repairTask.setStatus(0);
         repairTask.setUpdateTime(new Date());
         taskService.save(repairTask);
+        return repairTask;
+    }
+
+    /**
+     * 私聊
+     * */
+    @PostMapping("/chat")
+    public Map<String, Object> chat(@RequestBody Map<String, Object> map) {
+        return null;
     }
 }
