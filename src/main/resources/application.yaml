@@ -20,3 +20,7 @@ logging:
   level:
     com.project.repair: debug
     com.baomidou.mybatisplus: debug
+
+jwt:
+  secret: mySecretKeyWhichIsVeryLongAndSecure1234567890
+  expiration: 86400

@@ -8,13 +8,17 @@ import com.project.repair.Entity.RepairWorker;
 import com.project.repair.Entity.User;
 import com.project.repair.Service.RepairWorkerService;
 import com.project.repair.Service.TaskService;
+import com.project.repair.Utils.JwtTokenUtil;
+import org.apache.tomcat.Jar;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/repair")
@@ -25,6 +29,9 @@ public class RepairController {
 
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     /**
      * 获取所有维修人员
@@ -56,17 +63,31 @@ public class RepairController {
      * 维修人员登录
      * */
     @PostMapping("/login")
-    public RepairWorker login(@RequestBody LoginDto loginDto) {
+    public Map<String, Object> login(@RequestBody LoginDto loginDto) {
         LambdaQueryWrapper<RepairWorker> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(RepairWorker::getUsername, loginDto.getUsername());
         RepairWorker user1 = repairService.getOne(queryWrapper);
-        if (user1 == null) {
+
+        if(user1 ==null ||!user1.getPassword().equals(loginDto.getPassword())){
             return null;
         }
-        if(!user1.getPassword().equals(loginDto.getPassword())){
-            return null;
-        }
-        return user1;
+
+        String token = jwtTokenUtil.generateToken(user1.getUsername());
+
+        /**
+         * 获取过期时间
+         * */
+        Date expiration = jwtTokenUtil.getAllClaimsFromToken(token).getExpiration();
+        long expiresIn = expiration.getTime() - new Date().getTime();
+
+        /**
+         * 设置返回数据
+         * */
+        Map<String, Object> map = new HashMap<>();
+        map.put("token", token);
+        map.put("user", user1);
+
+        return map;
     }
 
     /**

@@ -7,12 +7,15 @@ import com.project.repair.Entity.RepairWorker;
 import com.project.repair.Entity.User;
 import com.project.repair.Service.RepairWorkerService;
 import com.project.repair.Service.UserService;
+import com.project.repair.Utils.JwtTokenUtil;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -23,6 +26,8 @@ public class UserController {
     private final UserService userService;
 
     private final RepairWorkerService repairWorkerService;
+
+    private final JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/add")
     public User add(@RequestBody User user) {
@@ -72,16 +77,24 @@ public class UserController {
      * 用户登录
      * */
     @PostMapping("/login")
-    public User login(@RequestBody LoginDto loginDto) {
+    public Map<String, Object> login(@RequestBody LoginDto loginDto) {
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(User::getUsername, loginDto.getUsername());
         User user1 = userService.getOne(queryWrapper);
-        if (user1 == null) {
+
+        if(user1==null ||!user1.getPassword().equals(loginDto.getPassword())){
             return null;
         }
-        if(!user1.getPassword().equals(loginDto.getPassword())){
-            return null;
-        }
-        return user1;
+
+        String token = jwtTokenUtil.generateToken(user1.getUsername());
+
+        /**
+         * 设置返回数据
+         * */
+        Map<String, Object> map = new HashMap<>();
+        map.put("token", token);
+        map.put("user", user1);
+
+        return map;
     }
 }
