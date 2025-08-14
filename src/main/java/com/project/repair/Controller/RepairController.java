@@ -108,12 +108,4 @@ public class RepairController {
         taskService.save(repairTask);
         return repairTask;
     }
-
-    /**
-     * 私聊
-     * */
-    @PostMapping("/chat")
-    public Map<String, Object> chat(@RequestBody Map<String, Object> map) {
-        return null;
-    }
 }

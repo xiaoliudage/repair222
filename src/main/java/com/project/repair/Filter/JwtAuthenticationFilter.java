@@ -1,7 +1,9 @@
 package com.project.repair.Filter;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.project.repair.Entity.RepairWorker;
 import com.project.repair.Entity.User;
+import com.project.repair.Service.RepairWorkerService;
 import com.project.repair.Service.UserService;
 import com.project.repair.Utils.JwtTokenUtil;
 import com.project.repair.Utils.UserContext;
@@ -23,6 +25,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RepairWorkerService repairService;
 
     private final JwtTokenUtil jwtTokenUtil;
 
@@ -50,6 +55,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             User user = userService.getOne(queryWrapper);
 
             UserContext.setUser(user);
+
+            if (user == null) {
+                LambdaQueryWrapper<RepairWorker> queryWrapper1 = new LambdaQueryWrapper<RepairWorker>()
+                        .eq(RepairWorker::getUsername, username);
+                RepairWorker repairWorker = repairService.getOne(queryWrapper1);
+
+                UserContext.setRepair(repairWorker);
+            }
 
             // 4. 创建认证对象
             UsernamePasswordAuthenticationToken authentication =
