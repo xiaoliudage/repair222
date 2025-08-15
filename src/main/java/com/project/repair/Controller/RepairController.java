@@ -3,6 +3,8 @@ package com.project.repair.Controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.project.repair.Dto.LoginDto;
 import com.project.repair.Dto.TaskDto;
+import com.project.repair.Dto.UpdateRepairWorker;
+import com.project.repair.Dto.UpdateUser;
 import com.project.repair.Entity.RepairTask;
 import com.project.repair.Entity.RepairWorker;
 import com.project.repair.Entity.User;
@@ -107,5 +109,19 @@ public class RepairController {
         repairTask.setUpdateTime(new Date());
         taskService.save(repairTask);
         return repairTask;
+    }
+
+    /**
+     * 修改个人信息
+     * */
+    @PostMapping("/update")
+    public RepairWorker update(@RequestBody UpdateRepairWorker updateRepairWorker) {
+        Integer id = UserContext.getRepair().getId();
+        RepairWorker repairWorker = new RepairWorker();
+        BeanUtils.copyProperties(updateRepairWorker, repairWorker);
+        repairWorker.setId(id);
+        repairWorker.setUpdatedAt(LocalDateTime.now());
+        repairService.updateById(repairWorker);
+        return repairWorker;
     }
 }
