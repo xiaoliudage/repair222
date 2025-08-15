@@ -81,7 +81,7 @@ public class CommonCotroller {
 
 
     /**
-     * 先实现维修人员界面的聊天功能
+     * 先实现维修人员界面的聊天功能，获取有自己发送的聊天记录
      * */
     @GetMapping("/chat/get")
     public List<Message> charAll(@RequestParam Integer receiverId) {
@@ -107,6 +107,37 @@ public class CommonCotroller {
         }
 
         return null;
-
     }
+
+    /**
+     * 先实现维修人员界面的聊天功能，获取有别人发送的聊天记录
+     * */
+    @GetMapping("/chat/get1")
+    public List<Message> charAll1(@RequestParam Integer senderId) {
+
+        /**
+         * 标识这个用户是普通用户
+         * */
+        if (UserContext.getUser() != null) {
+            LambdaQueryWrapper<Message> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(Message::getSenderId, senderId)
+                    .eq(Message::getReceiverId, UserContext.getUser().getId());
+            return messageService.list(queryWrapper);
+        }
+
+        /**
+         * 这个表示当前用户是维修人员
+         * */
+        if (UserContext.getRepair() != null) {
+            LambdaQueryWrapper<Message> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(Message::getSenderId, senderId)
+                    .eq(Message::getReceiverId,  UserContext.getRepair().getId());
+            return messageService.list(queryWrapper);
+        }
+
+        return null;
+    }
+
+
+
 }
