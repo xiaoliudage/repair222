@@ -3,14 +3,17 @@ package com.project.repair.Controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.project.repair.Dto.LoginDto;
+import com.project.repair.Dto.UpdateUser;
 import com.project.repair.Entity.RepairWorker;
 import com.project.repair.Entity.User;
 import com.project.repair.Service.RepairWorkerService;
 import com.project.repair.Service.UserService;
 import com.project.repair.Utils.JwtTokenUtil;
+import com.project.repair.Utils.UserContext;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -96,5 +99,20 @@ public class UserController {
         map.put("user", user1);
 
         return map;
+    }
+
+
+    /**
+     * 修改个人信息
+     * */
+    @PostMapping("/update")
+    public User update(@RequestBody UpdateUser updateUser) {
+        Integer id = UserContext.getUser().getId();
+        User user = new User();
+        BeanUtils.copyProperties(updateUser, user);
+        user.setId(id);
+        user.setUpdatedAt(LocalDateTime.now());
+        userService.updateById(user);
+        return user;
     }
 }
