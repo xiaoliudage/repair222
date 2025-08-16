@@ -15,7 +15,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class RepairWorker {
 
-    @TableId(value = "id", type = IdType.AUTO)
+
+    @TableId(value = "id")
     private Integer id;
 
     private String username;

@@ -124,4 +124,15 @@ public class RepairController {
         repairService.updateById(repairWorker);
         return repairWorker;
     }
+
+    /**
+     * 修改个人信息时，进行用户回显
+     * */
+    @GetMapping("/update/getById")
+    public UpdateRepairWorker updateGetById(@RequestParam("id") Integer id) {
+        UpdateRepairWorker updateRepairWorker = new UpdateRepairWorker();
+        RepairWorker repairWorker = repairService.getById(id);
+        BeanUtils.copyProperties(repairWorker, updateRepairWorker);
+        return updateRepairWorker;
+    }
 }

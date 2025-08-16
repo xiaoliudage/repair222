@@ -115,4 +115,15 @@ public class UserController {
         userService.updateById(user);
         return user;
     }
+
+    /**
+     * 修改个人信息时，进行用户回显
+     * */
+    @GetMapping("/update/getById")
+    public UpdateUser updateGetById(@RequestParam("id") Integer id) {
+        UpdateUser updateUser = new UpdateUser();
+        User user = userService.getById(id);
+        BeanUtils.copyProperties(user, updateUser);
+        return updateUser;
+    }
 }

@@ -38,7 +38,7 @@ public class SecurityConfig {
 
                 // 授权配置（新写法）
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/repair/login","user/login").permitAll()
+                        .requestMatchers("/repair/login","user/login","/user/add","/user/repair_add").permitAll()
                         .anyRequest().authenticated()
                 )
                 // 添加JWT过滤器到UsernamePasswordAuthenticationFilter之前

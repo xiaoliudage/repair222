@@ -15,6 +15,9 @@ mybatis-plus:
   type-aliases-package: com.project.repair.Entity
   configuration:
     map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: assign_id
 
 logging:
   level:
@@ -24,3 +27,4 @@ logging:
 jwt:
   secret: mySecretKeyWhichIsVeryLongAndSecure1234567890
   expiration: 86400
+
