@@ -100,10 +100,18 @@ public class RepairController {
     public RepairTask publish(@RequestBody TaskDto taskDto) {
         RepairTask repairTask = new RepairTask();
         BeanUtils.copyProperties(taskDto, repairTask);
-        User user = UserContext.getUser();
-        repairTask.setPublisherName(user.getUsername());
-        repairTask.setPublisherPhone(user.getPhone());
-        repairTask.setPublisherAddress(user.getAddress());
+        if(UserContext.getUser()!=null){
+            User user = UserContext.getUser();
+            repairTask.setPublisherName(user.getUsername());
+            repairTask.setPublisherPhone(user.getPhone());
+            repairTask.setPublisherAddress(user.getAddress());
+        }else{
+            RepairWorker user = UserContext.getRepair();
+            repairTask.setPublisherName(user.getUsername());
+            repairTask.setPublisherPhone(user.getPhone());
+            repairTask.setPublisherAddress(user.getAddress());
+        }
+
         repairTask.setPublishTime(new Date());
         repairTask.setStatus(0);
         repairTask.setUpdateTime(new Date());
